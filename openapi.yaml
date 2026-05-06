@@ -1,0 +1,706 @@
+openapi: 3.0.1
+info:
+  title: Library Management API
+  description: "REST API for managing books, authors, members and borrowing"
+  contact:
+    name: Library API Support
+    email: support@library.com
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: Info
+  description: Application information
+- name: Borrowing
+  description: Manage book borrowing and returns
+- name: Members
+  description: Manage library members
+- name: Authors
+  description: Manage library authors
+- name: Books
+  description: Manage library books
+paths:
+  /api/members/{id}:
+    get:
+      tags:
+      - Members
+      summary: Get member by ID
+      operationId: findById
+      parameters:
+      - name: id
+        in: path
+        description: Member ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Member found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+        "404":
+          description: Member not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+    put:
+      tags:
+      - Members
+      summary: Update member details
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        description: Member ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemberRequest"
+        required: true
+      responses:
+        "409":
+          description: Email already exists
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+        "200":
+          description: Member updated
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+        "404":
+          description: Member not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+  /api/borrows/{id}/return:
+    put:
+      tags:
+      - Borrowing
+      summary: Return a borrowed book
+      operationId: returnBook
+      parameters:
+      - name: id
+        in: path
+        description: Borrow record ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Book returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BorrowRecordResponse"
+        "404":
+          description: Borrow record not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BorrowRecordResponse"
+  /api/books/{id}:
+    get:
+      tags:
+      - Books
+      summary: Get book by ID
+      operationId: findById_1
+      parameters:
+      - name: id
+        in: path
+        description: Book ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Book found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+        "404":
+          description: Book not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+    put:
+      tags:
+      - Books
+      summary: Update book details
+      operationId: update_1
+      parameters:
+      - name: id
+        in: path
+        description: Book ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookRequest"
+        required: true
+      responses:
+        "404":
+          description: Book not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+        "409":
+          description: ISBN already exists
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+        "200":
+          description: Book updated
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+    delete:
+      tags:
+      - Books
+      summary: Delete a book
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        description: Book ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: Book deleted
+        "404":
+          description: Book not found
+  /api/authors/{id}:
+    get:
+      tags:
+      - Authors
+      summary: Get author by ID
+      operationId: findById_2
+      parameters:
+      - name: id
+        in: path
+        description: Author ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Author found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthorResponse"
+        "404":
+          description: Author not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthorResponse"
+    put:
+      tags:
+      - Authors
+      summary: Update an author
+      operationId: update_2
+      parameters:
+      - name: id
+        in: path
+        description: Author ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthorRequest"
+        required: true
+      responses:
+        "409":
+          description: Email already exists
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthorResponse"
+        "200":
+          description: Author updated
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthorResponse"
+        "404":
+          description: Author not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthorResponse"
+  /api/members:
+    get:
+      tags:
+      - Members
+      summary: Get all members with pagination
+      operationId: findAll
+      parameters:
+      - name: pageable
+        in: query
+        description: "Pagination: page, size, sort"
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: Paginated list of members
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageResponseMemberResponse"
+    post:
+      tags:
+      - Members
+      summary: Register a new member
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemberRequest"
+        required: true
+      responses:
+        "409":
+          description: Email already exists
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+        "400":
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+        "201":
+          description: Member registered
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+  /api/borrows:
+    post:
+      tags:
+      - Borrowing
+      summary: Borrow a book
+      operationId: borrow
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BorrowRequest"
+        required: true
+      responses:
+        "400":
+          description: Book unavailable or borrow limit reached
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BorrowRecordResponse"
+        "201":
+          description: Book borrowed successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BorrowRecordResponse"
+        "404":
+          description: Book or Member not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BorrowRecordResponse"
+  /api/books:
+    get:
+      tags:
+      - Books
+      summary: Get all books with pagination
+      description: Optionally filter by availability
+      operationId: findAll_1
+      parameters:
+      - name: available
+        in: query
+        description: "Filter by availability: true or false"
+        required: false
+        schema:
+          type: boolean
+      - name: pageable
+        in: query
+        description: "Pagination: page, size, sort"
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: Paginated list of books
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageResponseBookResponse"
+    post:
+      tags:
+      - Books
+      summary: Add a new book
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookRequest"
+        required: true
+      responses:
+        "201":
+          description: Book created
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+        "400":
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+        "404":
+          description: Author not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+        "409":
+          description: ISBN already exists
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+  /api/authors:
+    get:
+      tags:
+      - Authors
+      summary: Get all authors with pagination
+      operationId: findAll_2
+      parameters:
+      - name: pageable
+        in: query
+        description: "Pagination: page, size, sort"
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: Paginated list of authors
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageResponseAuthorResponse"
+    post:
+      tags:
+      - Authors
+      summary: Create a new author
+      operationId: create_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthorRequest"
+        required: true
+      responses:
+        "409":
+          description: Email already exists
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthorResponse"
+        "201":
+          description: Author created
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthorResponse"
+        "400":
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthorResponse"
+  /api/members/{id}/borrows:
+    get:
+      tags:
+      - Borrowing
+      summary: Get borrow history for a member
+      operationId: getMemberBorrowHistory
+      parameters:
+      - name: id
+        in: path
+        description: Member ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Borrow history retrieved
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BorrowRecordResponse"
+        "404":
+          description: Member not found
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BorrowRecordResponse"
+  /api/info:
+    get:
+      tags:
+      - Info
+      summary: Get application info
+      operationId: getInfo
+      responses:
+        "200":
+          description: App info returned
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+components:
+  schemas:
+    MemberRequest:
+      required:
+      - email
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+    MemberResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+    BorrowRecordResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        bookId:
+          type: integer
+          format: int64
+        bookTitle:
+          type: string
+        memberId:
+          type: integer
+          format: int64
+        memberName:
+          type: string
+        borrowedAt:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        returnedAt:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - RETURNED
+          - OVERDUE
+    BookRequest:
+      required:
+      - authorId
+      - isbn
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        isbn:
+          type: string
+        authorId:
+          type: integer
+          format: int64
+    BookResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        isbn:
+          type: string
+        available:
+          type: boolean
+        authorId:
+          type: integer
+          format: int64
+        authorName:
+          type: string
+    AuthorRequest:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+    AuthorResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+    BorrowRequest:
+      required:
+      - bookId
+      - memberId
+      type: object
+      properties:
+        bookId:
+          type: integer
+          format: int64
+        memberId:
+          type: integer
+          format: int64
+    Pageable:
+      type: object
+      properties:
+        page:
+          minimum: 0
+          type: integer
+          format: int32
+        size:
+          minimum: 1
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            type: string
+    PageResponseMemberResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/MemberResponse"
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+    PageResponseBookResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/BookResponse"
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+    PageResponseAuthorResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuthorResponse"
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
