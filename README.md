@@ -134,8 +134,8 @@ http://localhost:8080/h2-console
 | Username | `sa` |
 | Password | _(leave empty)_ |
 
-> Note: Data resets on every application restart as the database is in-memory.
-
+> **Sample Data:** On startup, the application automatically seeds the database with 3 authors,
+> 3 books, and 2 members so you can test all endpoints immediately without manual setup.
 ---
 
 ## API Endpoints
